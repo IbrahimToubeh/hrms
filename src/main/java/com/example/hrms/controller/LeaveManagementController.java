@@ -1,6 +1,7 @@
 package com.example.hrms.controller;
 
 import com.example.hrms.dto.ApiResponse;
+import com.example.hrms.dto.PageResponse;
 import com.example.hrms.dto.CreateLeaveRequestDTO;
 import com.example.hrms.dto.LeaveResponseDTO;
 import com.example.hrms.dto.ReviewLeaveRequestDTO;
@@ -32,23 +33,32 @@ public class LeaveManagementController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ApiResponse<List<LeaveResponseDTO>>> getMyLeaves() {
-        List<LeaveResponseDTO> leaves = leaveService.getMyLeaves();
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<PageResponse<LeaveResponseDTO>>> getMyLeaves(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<LeaveResponseDTO> leaves = leaveService.getMyLeaves(page, size);
         return ResponseEntity.ok(ApiResponse.success("My leaves retrieved successfully", leaves));
     }
 
     @GetMapping("/reported")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ApiResponse<List<LeaveResponseDTO>>> getReportedLeaves() {
-        List<LeaveResponseDTO> leaves = leaveService.getReportedLeaves();
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<PageResponse<LeaveResponseDTO>>> getReportedLeaves(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<LeaveResponseDTO> leaves = leaveService.getReportedLeaves(page, size);
         return ResponseEntity.ok(ApiResponse.success("Reported leaves retrieved successfully", leaves));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<LeaveResponseDTO>>> getAllLeaves() {
-        List<LeaveResponseDTO> leaves = leaveService.getAllLeaves();
+    public ResponseEntity<ApiResponse<PageResponse<LeaveResponseDTO>>> getAllLeaves(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<LeaveResponseDTO> leaves = leaveService.getAllLeaves(page, size);
         return ResponseEntity.ok(ApiResponse.success("All leaves retrieved successfully", leaves));
     }
 

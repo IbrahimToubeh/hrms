@@ -16,6 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.hrms.dto.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -56,28 +61,61 @@ public class LeaveService {
         return leaveRequestMapper.toDto(savedRequest);
     }
 
-    public List<LeaveResponseDTO> getMyLeaves() {
+    public PageResponse<LeaveResponseDTO> getMyLeaves(int pageNo, int pageSize) {
         Long userId = getCurrentUserId();
         Employee employee = employeeRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee profile not found"));
 
-        return leaveRequestRepository.findByLeaveRequesterId(employee.getId()).stream()
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<LeaveRequest> leaves = leaveRequestRepository.findByLeaveRequesterId(employee.getId(), pageable);
+        List<LeaveResponseDTO> content = leaves.getContent().stream()
                 .map(leaveRequestMapper::toDto)
                 .collect(Collectors.toList());
+
+        return PageResponse.<LeaveResponseDTO>builder()
+                .content(content)
+                .pageNo(leaves.getNumber())
+                .pageSize(leaves.getSize())
+                .totalElements(leaves.getTotalElements())
+                .totalPages(leaves.getTotalPages())
+                .last(leaves.isLast())
+                .build();
     }
 
-    public List<LeaveResponseDTO> getReportedLeaves() {
+    public PageResponse<LeaveResponseDTO> getReportedLeaves(int pageNo, int pageSize) {
         Long userId = getCurrentUserId();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         
-        return leaveRequestRepository.findByReporterId(userId).stream()
+        Page<LeaveRequest> leaves = leaveRequestRepository.findByReporterId(userId, pageable);
+        List<LeaveResponseDTO> content = leaves.getContent().stream()
                 .map(leaveRequestMapper::toDto)
                 .collect(Collectors.toList());
+
+        return PageResponse.<LeaveResponseDTO>builder()
+                .content(content)
+                .pageNo(leaves.getNumber())
+                .pageSize(leaves.getSize())
+                .totalElements(leaves.getTotalElements())
+                .totalPages(leaves.getTotalPages())
+                .last(leaves.isLast())
+                .build();
     }
 
-    public List<LeaveResponseDTO> getAllLeaves() {
-        return leaveRequestRepository.findAll().stream()
+    public PageResponse<LeaveResponseDTO> getAllLeaves(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<LeaveRequest> leaves = leaveRequestRepository.findAll(pageable);
+        List<LeaveResponseDTO> content = leaves.getContent().stream()
                 .map(leaveRequestMapper::toDto)
                 .collect(Collectors.toList());
+
+        return PageResponse.<LeaveResponseDTO>builder()
+                .content(content)
+                .pageNo(leaves.getNumber())
+                .pageSize(leaves.getSize())
+                .totalElements(leaves.getTotalElements())
+                .totalPages(leaves.getTotalPages())
+                .last(leaves.isLast())
+                .build();
     }
 
     @Transactional

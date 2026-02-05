@@ -1,6 +1,7 @@
 package com.example.hrms.controller;
 
 import com.example.hrms.dto.ApiResponse;
+import com.example.hrms.dto.PageResponse;
 import com.example.hrms.dto.CreateEmployeeRequestDTO;
 import com.example.hrms.dto.EmployeeResponseDTO;
 import com.example.hrms.dto.UpdateEmployeeRequestDTO;
@@ -33,8 +34,11 @@ public class EmployeeManagementController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAllEmployees() {
-        List<EmployeeResponseDTO> employees = employeeService.getAllEmployees();
+    public ResponseEntity<ApiResponse<PageResponse<EmployeeResponseDTO>>> getAllEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<EmployeeResponseDTO> employees = employeeService.getAllEmployees(page, size);
         return ResponseEntity.ok(ApiResponse.success("Employees retrieved successfully", employees));
     }
 
