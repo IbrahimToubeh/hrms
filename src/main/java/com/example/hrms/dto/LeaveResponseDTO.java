@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public record LeaveResponseDTO(
         Long id,
         Long reporterId,
-        Long employeeId,
+        Long leaveRequesterId,
         String email,
         LocalDate startDate,
         LocalDate endDate,

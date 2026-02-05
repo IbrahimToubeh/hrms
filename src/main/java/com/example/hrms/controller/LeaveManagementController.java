@@ -22,7 +22,7 @@ public class LeaveManagementController {
     private final LeaveService leaveService;
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<LeaveResponseDTO>> requestLeave(
             @Valid @RequestBody CreateLeaveRequestDTO request) {
         LeaveResponseDTO leaveRequest = leaveService.requestLeave(request);

@@ -22,8 +22,8 @@ public class LeaveRequest {
     @Column(name = "reporter_id", nullable = false)
     private Long reporterId;
 
-    @Column(name = "employee_id", nullable = false)
-    private Long employeeId;
+    @Column(name = "leave_requester_id", nullable = false)
+    private Long leaveRequesterId;
 
     @Column(nullable = false)
     private String email;

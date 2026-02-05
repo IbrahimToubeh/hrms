@@ -32,25 +32,25 @@ public class LeaveService {
 
     @Transactional
     public LeaveResponseDTO requestLeave(CreateLeaveRequestDTO request) {
-        Long userId = getCurrentUserId();
+        Long reporterId = getCurrentUserId();
 
-        
-        Employee employee = employeeRepository.findByUserId(userId)
+
+        Employee employee = employeeRepository.findByUserId(request.leaveRequesterId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee profile not found. Cannot request leave."));
 
         LeaveRequest leaveRequest = leaveRequestMapper.toEntity(request);
-        leaveRequest.setReporterId(userId); 
-        leaveRequest.setEmployeeId(employee.getId()); 
+        leaveRequest.setReporterId(reporterId);
+        leaveRequest.setLeaveRequesterId(request.leaveRequesterId());
         leaveRequest.setEmail(employee.getEmail());
 
         LeaveRequest savedRequest = leaveRequestRepository.save(leaveRequest);
 
-        
+
         HrmsEvent event = new HrmsEvent(
                 "LEAVE_REQUESTED",
-                Map.of("requestId", savedRequest.getId(), "employeeId", employee.getId(), "type",
+                Map.of("requestId", savedRequest.getId(), "leaveRequesterId", employee.getId(), "type",
                         savedRequest.getLeaveType()),
-                "Leave requested by " + employee.getFirstName() + " " + employee.getLastName());
+                "Leave for " + employee.getFirstName() + " " + employee.getLastName() +" and requested by employee with id" + reporterId+", reason for leave is : "+request.reason());
         kafkaProducerService.sendEvent(event);
 
         return leaveRequestMapper.toDto(savedRequest);
@@ -61,7 +61,7 @@ public class LeaveService {
         Employee employee = employeeRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee profile not found"));
 
-        return leaveRequestRepository.findByEmployeeId(employee.getId()).stream()
+        return leaveRequestRepository.findByLeaveRequesterId(employee.getId()).stream()
                 .map(leaveRequestMapper::toDto)
                 .collect(Collectors.toList());
     }

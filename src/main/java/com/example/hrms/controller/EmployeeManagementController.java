@@ -46,14 +46,14 @@ public class EmployeeManagementController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<EmployeeResponseDTO>> getCurrentEmployee() {
         EmployeeResponseDTO employee = employeeService.getCurrentEmployee();
         return ResponseEntity.ok(ApiResponse.success("Profile retrieved successfully", employee));
     }
 
     @PutMapping("/me")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateCurrentEmployee(
             @Valid @RequestBody UpdateEmployeeRequestDTO request) {
         EmployeeResponseDTO employee = employeeService.updateCurrentEmployee(request);

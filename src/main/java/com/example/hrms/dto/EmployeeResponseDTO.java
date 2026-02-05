@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 public record EmployeeResponseDTO(
         Long id,
         Long userId,
-        String employeeCode,
         String firstName,
         String lastName,
         String email,

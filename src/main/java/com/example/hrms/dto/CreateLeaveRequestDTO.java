@@ -12,5 +12,6 @@ public record CreateLeaveRequestDTO(
 
         @NotNull(message = "Leave type is required") LeaveType leaveType,
 
+        @NotNull(message = "Leave type is required") Long leaveRequesterId,
         @NotBlank(message = "Reason is required") @Size(max = 1000) String reason) {
 }
