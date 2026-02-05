@@ -1,13 +1,23 @@
-# Maven
+# Maven & Java
 target/
+*.class
+*.jar
+*.war
 
-# IntelliJ
+# IntelliJ & IDEs
 .idea/
 *.iml
+.vscode/
+bin/
 
-# Logs
+# Kafka & Zookeeper (The "Big" Files)
+data/
+data/kafka/
+data/zookeeper/
+*.lock
+checkpoint
+
+# Logs & OS
 *.log
-
-# OS
 .DS_Store
 Thumbs.db
