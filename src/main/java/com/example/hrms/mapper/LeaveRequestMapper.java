@@ -14,7 +14,7 @@ public interface LeaveRequestMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "reporterId", ignore = true)
-    @Mapping(target = "employeeId", ignore = true)
+    @Mapping(target = "leaveRequesterId", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "status", constant = "PENDING")
     @Mapping(target = "approvedBy", ignore = true)

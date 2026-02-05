@@ -45,7 +45,7 @@ public class EmployeeService {
         
         HrmsEvent event = new HrmsEvent(
                 "EMPLOYEE_CREATED",
-                Map.of("employeeId", savedEmployee.getId(), "userId", savedEmployee.getUserId(), "email",
+                Map.of("leaveRequesterId", savedEmployee.getId(), "userId", savedEmployee.getUserId(), "email",
                         savedEmployee.getEmail()),
                 "New employee created: " + savedEmployee.getFirstName() + " " + savedEmployee.getLastName());
         kafkaProducerService.sendEvent(event);

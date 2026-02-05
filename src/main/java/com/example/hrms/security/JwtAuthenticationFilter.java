@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtService.isTokenValid(token)) {
                     String userId = jwtService.extractUsername(token); 
                     String role = jwtService.extractRole(token);
-
+                    
                     if (userId != null && role != null
                             && SecurityContextHolder.getContext().getAuthentication() == null) {
                         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
@@ -50,7 +50,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Cannot set user authentication: {}", e);
             }
         }
 
