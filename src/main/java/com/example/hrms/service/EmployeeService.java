@@ -1,5 +1,6 @@
 package com.example.hrms.service;
 
+import com.example.hrms.dto.PageResponse;
 import com.example.hrms.dto.CreateEmployeeRequestDTO;
 import com.example.hrms.dto.EmployeeResponseDTO;
 import com.example.hrms.dto.HrmsEvent;
@@ -9,6 +10,9 @@ import com.example.hrms.exception.ResourceNotFoundException;
 import com.example.hrms.mapper.EmployeeMapper;
 import com.example.hrms.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,10 +57,21 @@ public class EmployeeService {
         return employeeMapper.toDto(savedEmployee);
     }
 
-    public List<EmployeeResponseDTO> getAllEmployees() {
-        return employeeRepository.findAll().stream()
+    public PageResponse<EmployeeResponseDTO> getAllEmployees(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Employee> employees = employeeRepository.findAll(pageable);
+        List<EmployeeResponseDTO> content = employees.getContent().stream()
                 .map(employeeMapper::toDto)
                 .collect(Collectors.toList());
+
+        return PageResponse.<EmployeeResponseDTO>builder()
+                .content(content)
+                .pageNo(employees.getNumber())
+                .pageSize(employees.getSize())
+                .totalElements(employees.getTotalElements())
+                .totalPages(employees.getTotalPages())
+                .last(employees.isLast())
+                .build();
     }
 
     public EmployeeResponseDTO getEmployeeById(Long id) {
