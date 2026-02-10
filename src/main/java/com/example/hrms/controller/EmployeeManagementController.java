@@ -49,6 +49,15 @@ public class EmployeeManagementController {
         return ResponseEntity.ok(ApiResponse.success("Employee retrieved successfully", employee));
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody com.example.hrms.dto.AdminUpdateEmployeeRequestDTO request) {
+        EmployeeResponseDTO employee = employeeService.updateEmployee(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Employee updated successfully", employee));
+    }
+
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<EmployeeResponseDTO>> getCurrentEmployee() {

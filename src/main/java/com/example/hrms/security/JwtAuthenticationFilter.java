@@ -24,6 +24,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final com.example.hrms.service.RedisService redisService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,7 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String userId = jwtService.extractUsername(token); 
                     String role = jwtService.extractRole(token);
                     
-                    if (userId != null && role != null
+                    String userStatus = redisService.getUserStatus(userId);
+                    if ("DISABLED".equals(userStatus)) {
+                        log.warn("User with ID {} is disabled. Rejecting request.", userId);
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"success\":false,\"message\":\"Account is disabled. Please contact administrator.\",\"data\":null}");
+                        return;
+                    } else if (userId != null && role != null
                             && SecurityContextHolder.getContext().getAuthentication() == null) {
                         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
